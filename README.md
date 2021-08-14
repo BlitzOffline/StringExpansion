@@ -31,5 +31,5 @@ Placeholders:
   `%string_random_<string1>_<string2>_<string3>_<etc>%` - Returns a random string from the list given  
   
   
-  Supports PlaceholderAPI placeholders. Just use brackets instead of %.  
+  **Supports PlaceholderAPI placeholders. Just use brackets instead of %.**  
   For example: `%string_equals_{server_name}_Lobby%` - Will check if the current server name is lobby based on the `%server_name%` placeholder.
