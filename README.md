@@ -28,7 +28,7 @@ Placeholders:
   
   `%string_length_<string>%` - Returns the length of the `strign`  
   
-  `%string_random_<string1>_<string2>_<string3>_<etc>%` - Returns a random string from the list given  
+  `%string_random_<string1>,<string2>,<string3>,<etc>%` - Returns a random string from the list given  
   
   
   
