@@ -59,11 +59,6 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
     }
 
     @Override
-    public boolean persist() {
-        return true;
-    }
-
-    @Override
     public Map<String, Object> getDefaults() {
         return ImmutableMap.<String, Object>builder()
                 .put("replacements.small-numbers.0", "₀")
