@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.blitzoffline'
-version '1.0.0'
+version '1.0.1'
 
 repositories {
     mavenCentral()
@@ -13,14 +13,14 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:21.0.1'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
 
     compileOnly 'me.clip:placeholderapi:2.10.10'
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 }
 
+compileJava.options.encoding = 'UTF-8'
+
 shadowJar {
-    minimize()
-    relocate 'org.jetbrains', 'com.blitzoffline.stringexpansion.libs.jetbrains'
-    archiveFileName.set("ServerExpansion-${project.version}.jar")
+    archiveFileName.set("StringExpansion-${project.version}.jar")
 }
