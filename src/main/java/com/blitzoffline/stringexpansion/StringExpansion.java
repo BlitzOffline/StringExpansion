@@ -1,19 +1,50 @@
 package com.blitzoffline.stringexpansion;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
-public class StringExpansion extends PlaceholderExpansion {
+public class StringExpansion extends PlaceholderExpansion implements Configurable {
+
+    private final Map<String, ReplacementConfiguration> replacementConfigurations = new HashMap<>();
+
+    public StringExpansion() {
+        final ConfigurationSection replacementSection = getConfigSection("replacements");
+
+        if (replacementSection != null) {
+            for (final String configurationName : replacementSection.getKeys(false)) {
+                final ConfigurationSection configuration = replacementSection.getConfigurationSection(configurationName);
+
+                if (configuration == null) {
+                    continue;
+                }
+
+                final List<String> searchList = new ArrayList<>(configuration.getKeys(false));
+                final String[] replacementList = searchList
+                        .stream()
+                        .map(it -> configuration.getString(it, ""))
+                        .toArray(String[]::new);
+
+                replacementConfigurations.put(configurationName, new ReplacementConfiguration(searchList.toArray(new String[0]), replacementList));
+            }
+        }
+    }
+
     @Override
-    public @NotNull
-    String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "string";
     }
 
@@ -24,7 +55,23 @@ public class StringExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0";
+        return "1.0.1";
+    }
+
+    @Override
+    public Map<String, Object> getDefaults() {
+        return ImmutableMap.<String, Object>builder()
+                .put("replacements.small-numbers.0", "₀")
+                .put("replacements.small-numbers.1", "₁")
+                .put("replacements.small-numbers.2", "₂")
+                .put("replacements.small-numbers.3", "₃")
+                .put("replacements.small-numbers.4", "₄")
+                .put("replacements.small-numbers.5", "₅")
+                .put("replacements.small-numbers.6", "₆")
+                .put("replacements.small-numbers.7", "₇")
+                .put("replacements.small-numbers.8", "₈")
+                .put("replacements.small-numbers.9", "₉")
+                .build();
     }
 
     private String getBoolean(boolean b) {
@@ -33,12 +80,15 @@ public class StringExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String args) {
-        if (args.split("_").length <= 1) {
+        final String[] parts = args.split("_", 2);
+
+        if (parts.length <= 1) {
             return null;
         }
 
-        String action = args.split("_", 2)[0].toLowerCase(Locale.ENGLISH);
-        String arguments = PlaceholderAPI.setBracketPlaceholders(player, args.split("_", 2)[1]);
+        String action = parts[0].toLowerCase(Locale.ENGLISH);
+        String arguments = PlaceholderAPI.setBracketPlaceholders(player, parts[1]);
+
         String[] split;
 
         switch (action) {
@@ -118,6 +168,10 @@ public class StringExpansion extends PlaceholderExpansion {
                 split = arguments.split(",");
                 int random = (int) Math.floor(Math.random()*(split.length));
                 return split[random];
+            case "replacecharacters":
+                split = arguments.split("_", 2);
+                final ReplacementConfiguration configuration = replacementConfigurations.get(split[0]);
+                return configuration == null ? split[1] : configuration.replace(split[1]);
             case "shuffle":
                 List<String> letters = Arrays.asList(arguments.split(""));
                 Collections.shuffle(letters);
