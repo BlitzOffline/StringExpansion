@@ -182,6 +182,12 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 return arguments.toLowerCase(Locale.ENGLISH);
             case "length":
                 return String.valueOf(arguments.length());
+            case "alternateuppercase":
+                split = arguments.split("_", 2);
+                char[] tempString = split[1].toLowerCase(Locale.ENGLISH).toCharArray();
+                for(int index = 0; index < tempString.length; index+=2)
+                    tempString[index] = Character.toUpperCase(tempString[index]);
+                return String.valueOf(tempString);
         }
 
         return null;
