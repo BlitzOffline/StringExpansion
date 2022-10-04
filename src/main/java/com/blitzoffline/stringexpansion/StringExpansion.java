@@ -188,6 +188,10 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 for(int index = 0; index < tempString.length; index+=2)
                     tempString[index] = Character.toUpperCase(tempString[index]);
                 return String.valueOf(tempString);
+            case "startswith":
+            case "start":
+                split = arguments.split("_", 3);
+                return String.valueOf(split[1].startsWith(split[2]));
         }
 
         return null;
