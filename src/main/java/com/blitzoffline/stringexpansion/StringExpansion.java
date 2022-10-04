@@ -183,19 +183,20 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
             case "length":
                 return String.valueOf(arguments.length());
             case "alternateuppercase":
-                split = arguments.split("_", 2);
-                char[] tempString = split[1].toLowerCase(Locale.ENGLISH).toCharArray();
+                char[] tempString = arguments.toLowerCase(Locale.ENGLISH).toCharArray();
                 for(int index = 0; index < tempString.length; index+=2)
                     tempString[index] = Character.toUpperCase(tempString[index]);
                 return String.valueOf(tempString);
             case "startswith":
             case "start":
-                split = arguments.split("_", 3);
-                return String.valueOf(split[1].startsWith(split[2]));
+                split = arguments.split("_", 2);
+                return String.valueOf(split[0].startsWith(split[1]));
             case "endswith":
             case "end":
-                split = arguments.split("_", 3);
-                return String.valueOf(split[1].endsWith(split[2]));
+                split = arguments.split("_", 2);
+                return String.valueOf(split[0].endsWith(split[1]));
+            case "trim":
+                return arguments.trim();
         }
 
         return null;
