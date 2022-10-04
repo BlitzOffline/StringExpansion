@@ -192,6 +192,10 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
             case "start":
                 split = arguments.split("_", 3);
                 return String.valueOf(split[1].startsWith(split[2]));
+            case "endswith":
+            case "end":
+                split = arguments.split("_", 3);
+                return String.valueOf(split[1].endsWith(split[2]));
         }
 
         return null;
