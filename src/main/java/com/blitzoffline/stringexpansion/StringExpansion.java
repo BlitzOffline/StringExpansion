@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -197,6 +198,10 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 return String.valueOf(split[0].endsWith(split[1]));
             case "trim":
                 return arguments.trim();
+            case "countcharacters":
+            case "count":
+                split = arguments.split("_", 1);
+                return String.valueOf(Stream.of(split[0].toCharArray()).filter(it -> String.valueOf(it).equalsIgnoreCase(split[1])).count());
         }
 
         return null;
