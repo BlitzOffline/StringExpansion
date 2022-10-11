@@ -32,6 +32,15 @@ Placeholders:
 
   `%string_replaceCharacters_<configuration>_<string>%` - Replace certain characters in a `string` as defined in config
   
+  `%string_alternateuppercase_<string>%` - Uppercase every second character.
+
+  `%string_startswith_<string>_<match>%` - Checks if the string starts with the match.
+
+  `%string_endswith_<string>_<match>%` - Checks if the string ends with the match.
+
+  `%string_trim_<string>%` - Trims the starting and ending spaces from the string.
+
+  `%string_count_<string>_<match-character>%` - Counts how many times a character appears in string.
   
   
   
