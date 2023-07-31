@@ -22,4 +22,18 @@ public class StringUtils {
         return false;
     }
 
+    public static int countOccurrences(String string, String substring) {
+        int count = 0;
+        int lastIndex = 0;
+
+        while (lastIndex != -1 && lastIndex < string.length()) {
+            lastIndex = string.indexOf(substring, lastIndex);
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += 1;
+            }
+        }
+        return count;
+    }
+
 }

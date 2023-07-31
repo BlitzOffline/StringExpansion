@@ -40,7 +40,7 @@ Placeholders:
 
   `%string_trim_<string>%` - Trims the starting and ending spaces from the string.
 
-  `%string_count_<string>_<match-character>%` - Counts how many times a character appears in string.
+  `%string_occurences_count_<string>_<match>%` - Counts how many times a character or a string appears in another string.
   
   
   
