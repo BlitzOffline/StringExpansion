@@ -180,6 +180,10 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 return arguments.toUpperCase(Locale.ENGLISH);
             case "lowercase":
                 return arguments.toLowerCase(Locale.ENGLISH);
+            case "capitalize":
+                return arguments.substring(0, 1).toUpperCase() + arguments.substring(1);
+            case "sentencecase":
+                return arguments.substring(0, 1).toUpperCase() + arguments.substring(1).toLowerCase(Locale.ENGLISH);
             case "length":
                 return String.valueOf(arguments.length());
             case "alternateuppercase":
