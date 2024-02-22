@@ -17,8 +17,10 @@ Placeholders:
   `%string_lastIndexOf_<string>_<match>%` - Returns the last index of `match` in `string`. -1 if match does not exist in string  
 
   `%string_substring_<startIndex>_<string>%` - Returns the substring that starts at `startIndex`  
+  **NEGATIVE INDEXES ARE SUPPORTED FOR START INDEX**
 
-  `%string_substring_<startIndex>,<endIndex>_<string>%` - Returns the substring that starts at `startIndex` and ends before `endIndex`
+  `%string_substring_<startIndex>,<endIndex>_<string>%` - Returns the substring that starts at `startIndex` and ends before `endIndex`  
+  **NEGATIVE INDEXES ARE SUPPORTED FOR END INDEX**  
   
   `%string_shuffle_<string>%` - Returns the `string` but with the characters shuffled  
   
@@ -26,11 +28,11 @@ Placeholders:
   
   `%string_lowercase_<string>%` - Returns the `string` with all letters being lowercase  
 
-  `%string_sentencecase_<string>%` - Returns the `string` with first letter being uppercase and all other letters being lowercase 
+  `%string_sentencecase_<string>%` - Returns the `string` with the first letter being uppercase and all other letters being lowercase 
 
   `%string_capitalize_<string>%` - Returns the `string` with the first character being uppercase
 
-  `%string_length_<string>%` - Returns the length of the `strign`  
+  `%string_length_<string>%` - Returns the length of the `string`  
   
   `%string_random_<string1>,<string2>,<string3>,<etc>%` - Returns a random string from the list given  
 
