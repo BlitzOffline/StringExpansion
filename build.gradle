@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.blitzoffline'
-version '1.0.2'
+version '1.0.4'
 
 repositories {
     mavenCentral()
@@ -13,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:21.0.1'
+    compileOnly 'org.jetbrains:annotations:24.1.0'
 
-    compileOnly 'me.clip:placeholderapi:2.10.10'
+    compileOnly 'me.clip:placeholderapi:2.11.5'
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 }
 

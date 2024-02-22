@@ -55,7 +55,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.3";
+        return "1.0.4";
     }
 
     @Override
@@ -144,25 +144,47 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 }
                 if (!split[0].contains(",")) {
                     int index = Integer.parseInt(split[0]);
-                    if (index < 0) {
-                        index = 0;
-                    }
-                    if (index >= split[1].length()) {
+                    int absIndex = Math.abs(index);
+                    int textLength = split[1].length();
+
+                    if (absIndex > textLength) {
                         return "";
                     }
+
+                    if (index < 0) {
+                        return split[1].substring(0, textLength - absIndex);
+                    }
+
                     return split[1].substring(index);
                 }
-                int firstIndex = Integer.parseInt(split[0].split(",", 2)[0]);
-                int secondIndex = Integer.parseInt(split[0].split(",", 2)[1]);
+
+                String[] indexes = split[0].split(",", 2);
+
+                int firstIndex = Integer.parseInt(indexes[0]);
+                int secondIndex = Integer.parseInt(indexes[1]);
+
+                int textLength = split[1].length();
+
                 if (firstIndex < 0) {
                     firstIndex = 0;
                 }
-                if (secondIndex > split[1].length()) {
-                    secondIndex = split[1].length();
-                }
-                if (firstIndex >= split[1].length() || secondIndex <= firstIndex) {
+
+                if (firstIndex >= textLength) {
                     return "";
                 }
+
+                if (secondIndex > textLength) {
+                    secondIndex = textLength;
+                }
+
+                if (secondIndex < 0) {
+                    secondIndex = textLength + secondIndex;
+                }
+
+                if (firstIndex >= secondIndex) {
+                    return "";
+                }
+
                 return split[1].substring(firstIndex, secondIndex);
             case "random":
                 split = arguments.split(",");
