@@ -1,6 +1,28 @@
 # StringExpansion
 Simple PlaceholderAPI expansion for processing strings.
 
+Configuration:
+```yaml
+"string":
+  # Character(s) used to separate the arguments
+  "separator": "_"
+  # Replace certain characters in a string when used with %string_replaceCharacters_<configuration>_<string>%
+  "replaceCharacters":
+    # Configuration name
+    "small-numbers":
+      # Characters to replace
+      "0": "₀"
+      "1": "₁"
+      "2": "₂"
+      "3": "₃"
+      "4": "₄"
+      "5": "₅"
+      "6": "₆"
+      "7": "₇"
+      "8": "₈"
+      "9": "₉"
+```
+
 Placeholders:  
   `%string_equals_<string>_<match>%` - Checks if `string` and `match` are the same string in a case-sensitive manner  
   

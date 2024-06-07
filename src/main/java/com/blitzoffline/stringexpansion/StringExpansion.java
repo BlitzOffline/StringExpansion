@@ -20,26 +20,30 @@ import org.jetbrains.annotations.NotNull;
 public class StringExpansion extends PlaceholderExpansion implements Configurable {
 
     private final Map<String, ReplacementConfiguration> replacementConfigurations = new HashMap<>();
+    private final String separator;
 
     public StringExpansion() {
+        this.separator = getString("separator", null);
+
         final ConfigurationSection replacementSection = getConfigSection("replacements");
+        if (replacementSection == null) {
+            return;
+        }
 
-        if (replacementSection != null) {
-            for (final String configurationName : replacementSection.getKeys(false)) {
-                final ConfigurationSection configuration = replacementSection.getConfigurationSection(configurationName);
+        for (final String configurationName : replacementSection.getKeys(false)) {
+            final ConfigurationSection configuration = replacementSection.getConfigurationSection(configurationName);
 
-                if (configuration == null) {
-                    continue;
-                }
-
-                final List<String> searchList = new ArrayList<>(configuration.getKeys(false));
-                final String[] replacementList = searchList
-                        .stream()
-                        .map(it -> configuration.getString(it, ""))
-                        .toArray(String[]::new);
-
-                replacementConfigurations.put(configurationName, new ReplacementConfiguration(searchList.toArray(new String[0]), replacementList));
+            if (configuration == null) {
+                continue;
             }
+
+            final List<String> searchList = new ArrayList<>(configuration.getKeys(false));
+            final String[] replacementList = searchList
+                    .stream()
+                    .map(it -> configuration.getString(it, ""))
+                    .toArray(String[]::new);
+
+            this.replacementConfigurations.put(configurationName, new ReplacementConfiguration(searchList.toArray(new String[0]), replacementList));
         }
     }
 
@@ -55,12 +59,13 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.4";
+        return "1.0.5";
     }
 
     @Override
     public Map<String, Object> getDefaults() {
         return ImmutableMap.<String, Object>builder()
+                .put("separator", "_")
                 .put("replacements.small-numbers.0", "₀")
                 .put("replacements.small-numbers.1", "₁")
                 .put("replacements.small-numbers.2", "₂")
@@ -80,7 +85,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String args) {
-        final String[] parts = args.split("_", 2);
+        final String[] parts = args.split(separator, 2);
 
         if (parts.length <= 1) {
             return null;
@@ -93,31 +98,31 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
         switch (action) {
             case "equals":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return getBoolean(split[0].equals(split[1]));
             case "equalsignorecase":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return getBoolean(split[0].equalsIgnoreCase(split[1]));
             case "contains":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return getBoolean(split[0].contains(split[1]));
             case "containsignorecase":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return getBoolean(StringUtils.containsIgnoreCase(split[0], split[1]));
             case "charat":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
@@ -126,19 +131,19 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 }
                 return String.valueOf(split[1].charAt(Integer.parseInt(split[0])));
             case "indexof":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return String.valueOf(split[0].indexOf(split[1]));
             case "lastindexof":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return String.valueOf(split[0].lastIndexOf(split[1]));
             case "substring":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
@@ -191,7 +196,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                 int random = (int) Math.floor(Math.random()*(split.length));
                 return split[random];
             case "replacecharacters":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 final ReplacementConfiguration configuration = replacementConfigurations.get(split[0]);
                 return configuration == null ? split[1] : configuration.replace(split[1]);
             case "shuffle":
@@ -214,15 +219,15 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
                     tempString[index] = Character.toUpperCase(tempString[index]);
                 return String.valueOf(tempString);
             case "startswith":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 return String.valueOf(split[0].startsWith(split[1]));
             case "endswith":
-                split = arguments.split("_", 2);
+                split = arguments.split(separator, 2);
                 return String.valueOf(split[0].endsWith(split[1]));
             case "trim":
                 return arguments.trim();
             case "occurences":
-                split = arguments.split("_", 3);
+                split = arguments.split(separator, 3);
                 if (split.length < 3) {
                     return null;
                 }
