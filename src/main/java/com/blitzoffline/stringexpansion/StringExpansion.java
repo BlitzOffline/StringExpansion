@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -23,7 +24,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
     private final String separator;
 
     public StringExpansion() {
-        this.separator = getString("separator", null);
+        this.separator = Pattern.quote(getString("separator", "_"));
 
         final ConfigurationSection replacementSection = getConfigSection("replacements");
         if (replacementSection == null) {
