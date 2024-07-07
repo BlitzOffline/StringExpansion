@@ -60,7 +60,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.5";
+        return "1.0.6";
     }
 
     @Override
