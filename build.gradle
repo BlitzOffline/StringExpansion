@@ -4,18 +4,18 @@ plugins {
 }
 
 group 'com.blitzoffline'
-version '1.0.6'
+version '1.0.7'
 
 repositories {
     mavenCentral()
-    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
-    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = "https://repo.helpch.at/releases/" }
 }
 
 dependencies {
     compileOnly 'org.jetbrains:annotations:24.1.0'
 
-    compileOnly 'me.clip:placeholderapi:2.11.5'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 }
 

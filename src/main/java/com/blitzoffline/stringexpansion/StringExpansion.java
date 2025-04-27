@@ -60,7 +60,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.6";
+        return "1.0.7";
     }
 
     @Override
@@ -228,6 +228,7 @@ public class StringExpansion extends PlaceholderExpansion implements Configurabl
             case "trim":
                 return arguments.trim();
             case "occurences":
+            case "occurrences":
                 split = arguments.split(separator, 3);
                 if (split.length < 3) {
                     return null;
