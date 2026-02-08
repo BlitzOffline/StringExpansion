@@ -1,23 +1,21 @@
 package com.blitzoffline.stringexpansion;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import at.helpch.placeholderapi.PlaceholderAPI;
+import at.helpch.placeholderapi.expansion.Configurable;
 import at.helpch.placeholderapi.expansion.PlaceholderExpansion;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import org.jetbrains.annotations.NotNull;
 
-public class StringExpansion extends PlaceholderExpansion {
-
-    private static final String SEPARATOR = "_";
+public class StringExpansion extends PlaceholderExpansion implements Configurable<ExpansionConfig> {
+    private final Map<String, ReplacementConfiguration> replacementConfigurations = new HashMap<>();
     private final Map<String, Pattern> patterns = new ConcurrentHashMap<>();
+    private String separator;
 
     @Override
     public @NotNull String getIdentifier() {
@@ -35,8 +33,59 @@ public class StringExpansion extends PlaceholderExpansion {
     }
 
     @Override
+    public @NotNull Class<ExpansionConfig> provideConfigType() {
+        return ExpansionConfig.class;
+    }
+
+    @Override
+    public @NotNull ExpansionConfig provideDefault() {
+        return new ExpansionConfig("_", Map.of("small-numbers", Map.of(
+                "0", "₀",
+                "1", "₁",
+                "2", "₂",
+                "3", "₃",
+                "4", "₄",
+                "5", "₅",
+                "6", "₆",
+                "7", "₇",
+                "8", "₈",
+                "9", "₉"
+        )));
+    }
+
+    @Override
+    public boolean canRegister() {
+        final ExpansionConfig config = getExpansionConfig(StringExpansion.class);
+        
+        if (config == null) {
+            HytaleLogger.get("[PlaceholderAPI] [String-Expansion]").atSevere().log("Unable to load due to missing config");
+            return false;
+        }
+        
+        separator = Pattern.quote(config.getSeparator());
+        
+        for (final Map.Entry<String, Map<String, String>> replacementsEntry : config.getReplacements().entrySet()) {
+            final String name = replacementsEntry.getKey();
+            final Map<String, String> replacements = replacementsEntry.getValue();
+            
+            if (replacements.isEmpty()) {
+                continue;
+            }
+            
+            final List<String> searchList = new ArrayList<>(replacements.keySet());
+            final String[] replacementList = searchList.stream()
+                    .map(r -> replacements.getOrDefault(r, ""))
+                    .toArray(String[]::new);
+            
+            replacementConfigurations.put(name, new ReplacementConfiguration(searchList.toArray(new String[0]), replacementList));
+        }
+
+        return super.canRegister();
+    }
+
+    @Override
     public String onPlaceholderRequest(PlayerRef player, @NotNull String args) {
-        final String[] parts = args.split(SEPARATOR, 2);
+        final String[] parts = args.split(separator, 2);
 
         if (parts.length <= 1) {
             return null;
@@ -49,31 +98,31 @@ public class StringExpansion extends PlaceholderExpansion {
 
         switch (action) {
             case "equals":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return PlaceholderAPI.booleanValue(split[0].equals(split[1]));
             case "equalsignorecase":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return PlaceholderAPI.booleanValue(split[0].equalsIgnoreCase(split[1]));
             case "contains":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return PlaceholderAPI.booleanValue(split[0].contains(split[1]));
             case "containsignorecase":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return PlaceholderAPI.booleanValue(StringUtils.containsIgnoreCase(split[0], split[1]));
             case "charat":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
@@ -82,19 +131,19 @@ public class StringExpansion extends PlaceholderExpansion {
                 }
                 return String.valueOf(split[1].charAt(Integer.parseInt(split[0])));
             case "indexof":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return String.valueOf(split[0].indexOf(split[1]));
             case "lastindexof":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
                 return String.valueOf(split[0].lastIndexOf(split[1]));
             case "substring":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
@@ -146,6 +195,10 @@ public class StringExpansion extends PlaceholderExpansion {
                 split = arguments.split(",");
                 int random = (int) Math.floor(Math.random()*(split.length));
                 return split[random];
+            case "replacecharacters":
+                split = arguments.split(separator, 2);
+                final ReplacementConfiguration configuration = replacementConfigurations.get(split[0]);
+                return configuration == null ? split[1] : configuration.replace(split[1]);
             case "shuffle":
                 List<String> letters = Arrays.asList(arguments.split(""));
                 Collections.shuffle(letters);
@@ -166,16 +219,16 @@ public class StringExpansion extends PlaceholderExpansion {
                     tempString[index] = Character.toUpperCase(tempString[index]);
                 return String.valueOf(tempString);
             case "startswith":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 return String.valueOf(split[0].startsWith(split[1]));
             case "endswith":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 return String.valueOf(split[0].endsWith(split[1]));
             case "trim":
                 return arguments.trim();
             case "occurences":
             case "occurrences":
-                split = arguments.split(SEPARATOR, 3);
+                split = arguments.split(separator, 3);
                 if (split.length < 3) {
                     return null;
                 }
@@ -186,7 +239,7 @@ public class StringExpansion extends PlaceholderExpansion {
 
                 return String.valueOf(StringUtils.countOccurrences(split[1], split[2]));
             case "regex":
-                split = arguments.split(SEPARATOR, 2);
+                split = arguments.split(separator, 2);
                 if (split.length < 2) {
                     return null;
                 }
